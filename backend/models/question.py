@@ -10,7 +10,7 @@ from sqlalchemy import Boolean, Integer, String, Enum
 from sqlalchemy.orm import relationship
 import sqlalchemy.dialects.postgresql as pg
 from db.connection import Base
-from models.option import OptionBase, OptionBaseWithId
+from models.option import OptionBase
 
 
 class QuestionType(enum.Enum):
@@ -100,7 +100,7 @@ class QuestionBase(BaseModel):
     meta: bool
     type: QuestionType
     required: bool
-    option: List[OptionBaseWithId]
+    option: List[OptionBase]
     dependency: Optional[List[dict]]
 
     class Config:

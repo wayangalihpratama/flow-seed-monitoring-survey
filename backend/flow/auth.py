@@ -51,7 +51,3 @@ def get_data(url, token):
 def get_form(token, form_id: int):
     form_url = tc_api_url.replace('form_id', str(form_id))
     return get_data(form_url, token)
-
-
-token = get_token()
-print(get_form(token=token, form_id=registraton_form))
