@@ -27,7 +27,7 @@ class Answer(Base):
         ForeignKey('question.id', onupdate="CASCADE", ondelete="CASCADE"),
         primary_key=True)
     data = Column(
-        Integer,
+        BigInteger,
         ForeignKey('data.id', onupdate="CASCADE", ondelete="CASCADE"),
         primary_key=True)
     text = Column(Text, nullable=True)

@@ -6,12 +6,12 @@ from typing_extensions import TypedDict
 from typing import Optional, List
 from pydantic import BaseModel
 from pydantic import confloat
-from sqlalchemy import Column, Integer, Float, String
+from sqlalchemy import Column, Float, String
 from sqlalchemy import ForeignKey, DateTime, BigInteger
 import sqlalchemy.dialects.postgresql as pg
 from sqlalchemy.orm import relationship
 from db.connection import Base
-from models.answer import AnswerDict, AnswerDictWithHistory, AnswerBase
+from models.answer import AnswerDict, AnswerBase
 from .form import Form
 from .answer import Answer
 
@@ -31,20 +31,16 @@ class DataDict(TypedDict):
     answer: List[AnswerDict]
 
 
-class DataDictWithHistory(DataDict):
-    answer: List[AnswerDictWithHistory]
-
-
 class DataResponse(BaseModel):
     current: int
-    data: List[DataDictWithHistory]
+    data: List[DataDict]
     total: int
     total_page: int
 
 
 class Data(Base):
     __tablename__ = "data"
-    id = Column(Integer, primary_key=True, index=True, nullable=True)
+    id = Column(BigInteger, primary_key=True, index=True, nullable=True)
     name = Column(String)
     form = Column(BigInteger, ForeignKey(Form.id))
     geo = Column(pg.ARRAY(Float), nullable=True)
@@ -56,8 +52,10 @@ class Data(Base):
 
     def __init__(
         self, name: str, form: int, geo: List[float],
-        updated: datetime, created: datetime
+        updated: datetime, created: datetime,
+        id: Optional[int] = None
     ):
+        self.id = id
         self.name = name
         self.form = form
         self.geo = geo

@@ -20,7 +20,7 @@ depends_on = None
 def upgrade() -> None:
     op.create_table(
         'data',
-        sa.Column('id', sa.Integer(), nullable=False),
+        sa.Column('id', sa.BigInteger(), nullable=False),
         sa.Column('name', sa.String()),
         sa.Column('form', sa.BigInteger(), sa.ForeignKey('form.id')),
         sa.Column('geo', pg.ARRAY(sa.Float()), nullable=True),

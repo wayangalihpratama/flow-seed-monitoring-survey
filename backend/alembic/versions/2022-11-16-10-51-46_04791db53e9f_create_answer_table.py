@@ -22,7 +22,7 @@ def upgrade() -> None:
         'answer',
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('question', sa.BigInteger(), sa.ForeignKey('question.id')),
-        sa.Column('data', sa.Integer(), sa.ForeignKey('data.id')),
+        sa.Column('data', sa.BigInteger(), sa.ForeignKey('data.id')),
         sa.Column('value', sa.Float(), nullable=True),
         sa.Column('text', sa.Text(), nullable=True),
         sa.Column('options', pg.ARRAY(sa.String()), nullable=True),

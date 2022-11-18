@@ -10,8 +10,11 @@ auth_data = {
     'scope': 'openid email'
 }
 auth_url = "https://akvofoundation.eu.auth0.com/oauth/token"
-flow_api_url = "https://api-auth0.akvo.org/flow/orgs/seap/surveys/survey_id"
-tc_api_url = "http://tech-consultancy.akvo.org/akvo-flow-web-api/seap/form_id/update"
+flow_api_url = "https://api-auth0.akvo.org/flow/orgs/seap"
+tc_api_url = "http://tech-consultancy.akvo.org/akvo-flow-web-api/seap"
+form_definition_url = f"{tc_api_url}/#form#/update"
+data_url = f"{flow_api_url}/form_instances?survey_id=#survey#&form_id=#form#"
+init_sync_url = f"{flow_api_url}/sync?initial=true"
 
 # Farmer test survey from Demo Survey
 survey_id = 6087710401888256
@@ -49,5 +52,14 @@ def get_data(url, token):
 
 
 def get_form(token, form_id: int):
-    form_url = tc_api_url.replace('form_id', str(form_id))
-    return get_data(form_url, token)
+    url = form_definition_url.replace('#form#', str(form_id))
+    return get_data(url, token)
+
+
+def get_datapoint(token, survey_id: int, form_id: int, page_size: int = 50):
+    # do we need to init sync here?
+    # if yes, we need to create sync table
+    url = data_url.replace("#survey#", str(survey_id))
+    url = url.replace("#form#", str(form_id))
+    url = f"{url}&page_size={page_size}"
+    return get_data(url, token)

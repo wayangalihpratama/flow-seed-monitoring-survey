@@ -111,10 +111,15 @@ def update_question(
 
 
 def get_question(
-    session: Session, form: Optional[int] = None
+    session: Session,
+    form: Optional[int] = None,
+    type: Optional[QuestionType] = None,
 ) -> List[QuestionDict]:
     if form:
         return session.query(Question).filter(Question.form == form).all()
+    if form and type:
+        return session.query(Question).filter(and_(
+            Question.form == form, Question.type == type)).all()
     return session.query(Question).all()
 
 

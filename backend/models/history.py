@@ -21,7 +21,7 @@ class History(Base):
     __tablename__ = "history"
     id = Column(Integer, primary_key=True, index=True, nullable=True)
     question = Column(BigInteger, ForeignKey('question.id'))
-    data = Column(Integer, ForeignKey('data.id'))
+    data = Column(BigInteger, ForeignKey('data.id'))
     text = Column(Text, nullable=True)
     value = Column(Float, nullable=True)
     options = Column(pg.ARRAY(String), nullable=True)
