@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from typing import List, Union
 from sqlalchemy.orm import Session
@@ -19,11 +20,23 @@ def append_value(
     if type == QuestionType.date:
         answer.text = value
     if type == QuestionType.geo:
-        answer.text = ("{}|{}").format(value[0], value[1])
+        answer.text = ("{}|{}").format(value.get('lat'), value.get('long'))
     if type == QuestionType.option:
-        answer.options = value
+        options = [
+            v.get('name')
+            if 'name' in v
+            else v.get('text') for v in value]
+        answer.options = options
     if type == QuestionType.multiple_option:
-        answer.options = value
+        options = [
+            v.get('name')
+            if 'name' in v
+            else v.get('text') for v in value]
+        answer.options = options
+    if type == QuestionType.photo:
+        answer.text = value.get('filename')
+    if type == QuestionType.geoshape:
+        answer.text = json.dumps(value)
     return answer
 
 

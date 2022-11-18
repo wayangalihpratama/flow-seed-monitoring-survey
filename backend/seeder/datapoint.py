@@ -1,12 +1,13 @@
 import os
 import time
 from datetime import timedelta
-from db import crud_question_group
 from db import crud_question
 from db import crud_data
 from db.connection import Base, SessionLocal, engine
 from db.truncator import truncate
+from db import crud_answer
 from models.question import QuestionType
+from models.answer import Answer
 import flow.auth as flow_auth
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -27,20 +28,38 @@ for form_id in [flow_auth.registraton_form, flow_auth.monitoring_form]:
         form_id=form_id, page_size=100)
     formInstances = data.get('formInstances')
     nextPageUrl = data.get('nextPageUrl')
-    # find geo question and get geo value
-    qgeo = crud_question.get_question(
-        session=session, form=form_id, type=QuestionType.geo.value)
-    qgeo = qgeo[0] if len(qgeo) else None
     for fi in formInstances:
-        # find geo question and get geo value
-        responses = []
-        for attr, value in fi.get('responses').items():
-            responses.append(value)
-        crud_data.add_data(
+        answers = []
+        geoVal = None
+        # fetching answers value into answer model
+        for key, value in fi.get('responses').items():
+            for val in value:
+                for kval, aval in val.items():
+                    question = crud_question.get_question_by_id(
+                        session=session, id=kval)
+                    if not question:
+                        continue
+                    if question.type == QuestionType.geo:
+                        geoVal = [aval.get('lat'), aval.get('long')]
+                    answer = Answer(
+                        data=fi.get('id'),
+                        question=question.id,
+                        created=fi.get('createdAt'))
+                    answer = crud_answer.append_value(
+                        answer=answer, value=aval, type=question.type)
+                    answers.append(answer)
+        data = crud_data.add_data(
             session=session,
             id=fi.get('id'),
             name=fi.get('displayName'),
             form=form_id,
+            geo=geoVal,
             created=fi.get('createdAt'),
-            answers=[])
+            answers=answers)
+        print(f"Datapoint: {data.id}")
     print(f"{form_id}: seed complete")
+    print("------------------------------------------")
+
+elapsed_time = time.process_time() - start_time
+elapsed_time = str(timedelta(seconds=elapsed_time)).split(".")[0]
+print(f"\n-- DONE IN {elapsed_time}\n")
