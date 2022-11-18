@@ -23,7 +23,11 @@ def upgrade() -> None:
         sa.Column('name', sa.String()),
         sa.Column('version', sa.Float(), nullable=True, default=0.0),
         sa.Column('description', sa.Text(), nullable=True),
-        sa.PrimaryKeyConstraint('id'))
+        sa.Column('registration_form', sa.BigInteger(), nullable=True),
+        sa.PrimaryKeyConstraint('id'),
+        sa.ForeignKeyConstraint(['registration_form'], ['form.id'],
+                                name='form_registration_constraint',
+                                ondelete='CASCADE'))
     op.create_index(op.f('ix_form_id'), 'form', ['id'], unique=True)
 
 

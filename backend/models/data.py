@@ -25,6 +25,7 @@ class DataDict(TypedDict):
     id: int
     name: str
     form: int
+    identifier: Optional[str] = None
     geo: Optional[GeoData] = None
     created: Optional[str] = None
     updated: Optional[str] = None
@@ -41,6 +42,7 @@ class DataResponse(BaseModel):
 class Data(Base):
     __tablename__ = "data"
     id = Column(BigInteger, primary_key=True, index=True, nullable=True)
+    identifier = Column(String, nullable=True)
     name = Column(String)
     form = Column(BigInteger, ForeignKey(Form.id))
     geo = Column(pg.ARRAY(Float), nullable=True)
@@ -53,9 +55,10 @@ class Data(Base):
     def __init__(
         self, name: str, form: int, geo: List[float],
         updated: datetime, created: datetime,
-        id: Optional[int] = None
+        id: Optional[int] = None, identifier: Optional[str] = None
     ):
         self.id = id
+        self.identifier = identifier
         self.name = name
         self.form = form
         self.geo = geo
@@ -69,6 +72,7 @@ class Data(Base):
     def serialize(self) -> DataDict:
         return {
             "id": self.id,
+            "identifier": self.identifier,
             "name": self.name,
             "form": self.form,
             "geo": {
@@ -86,6 +90,7 @@ class DataBase(BaseModel):
     id: int
     name: str
     form: int
+    identifier: Optional[str] = None
     geo: Optional[GeoData] = None
     created: Optional[str] = None
     updated: Optional[str] = None

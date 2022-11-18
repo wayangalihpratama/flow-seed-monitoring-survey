@@ -10,11 +10,13 @@ def add_form(
     id: Optional[int] = None,
     version: Optional[float] = None,
     description: Optional[str] = None,
+    registration_form: Optional[int] = None,
 ) -> FormDict:
     form = Form(
         id=id, name=name,
         version=version if version else 1.0,
-        description=description)
+        description=description,
+        registration_form=registration_form)
     session.add(form)
     session.commit()
     session.flush()
@@ -36,6 +38,7 @@ def update_form(
     name: str,
     version: Optional[float] = None,
     description: Optional[str] = None,
+    registration_form: Optional[int] = None,
 ) -> FormDict:
     form = session.query(Form).filter(Form.id == id).first()
     form.name = name
@@ -46,6 +49,7 @@ def update_form(
     if version:
         form.version = version
     form.description = description
+    form.registration_form = registration_form
     session.commit()
     session.flush()
     session.refresh(form)

@@ -18,12 +18,13 @@ def add_data(
     session: Session, name: str, form: int,
     answers: List[AnswerBase], geo: Optional[List[float]] = None,
     id: Optional[int] = None, created: Optional[datetime] = None,
-    updated: Optional[datetime] = None
+    updated: Optional[datetime] = None,
+    identifier: Optional[str] = None
 ) -> DataDict:
     data = Data(
         id=id, name=name, form=form, geo=geo,
         created=created if created else datetime.now(),
-        updated=updated)
+        updated=updated, identifier=identifier)
     for answer in answers:
         data.answer.append(answer)
     session.add(data)

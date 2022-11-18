@@ -18,6 +18,11 @@ start_time = time.process_time()
 token = flow_auth.get_token()
 
 
+# TODO:: MONITORING DATAPOINT
+# 1. Add 'identifier' as the unique identifier that link registration with monitoring datapoint
+# 2. how we now if form is a registration or monitoring form?
+# 3. we need to seed both registration and monitoring datapoints (while monitoring will be have histories)
+
 def seed_datapoint(data):
     formInstances = data.get('formInstances')
     nextPageUrl = data.get('nextPageUrl')

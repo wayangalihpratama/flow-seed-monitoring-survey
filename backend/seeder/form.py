@@ -20,6 +20,8 @@ for table in ["form", "question_group", "question", "option"]:
     action = truncate(session=session, table=table)
     print(action)
 
+# TODO:: Need to update form seeder, add registration_form id
+
 for form_id in [flow_auth.registraton_form, flow_auth.monitoring_form]:
     # fetch form
     json_form = flow_auth.get_form(token=token, form_id=form_id)

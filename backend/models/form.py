@@ -4,7 +4,7 @@
 from typing_extensions import TypedDict
 from typing import List, Optional
 from pydantic import BaseModel
-from sqlalchemy import Column, BigInteger, String, Text, Float
+from sqlalchemy import Column, BigInteger, String, Text, Float, ForeignKey
 from sqlalchemy.orm import relationship
 from db.connection import Base
 from models.question_group import QuestionGroupBase
@@ -15,6 +15,7 @@ class FormDict(TypedDict):
     name: str
     version: Optional[float]
     description: Optional[str]
+    registration_form: Optional[int]
 
 
 class Form(Base):
@@ -23,6 +24,7 @@ class Form(Base):
     name = Column(String)
     description = Column(Text, nullable=True)
     version = Column(Float, nullable=True, default=0.0)
+    registration_form = Column(BigInteger, ForeignKey('form.id'))
 
     question_group = relationship(
         "QuestionGroup", cascade="all, delete",
@@ -34,11 +36,13 @@ class Form(Base):
         name: str,
         version: Optional[float] = 0.0,
         description: Optional[str] = None,
+        registration_form: Optional[int] = None
     ):
         self.id = id
         self.name = name
         self.version = version
         self.description = description
+        self.registration_form = registration_form
 
     def __repr__(self) -> int:
         return f"<Form {self.id}>"
@@ -50,6 +54,7 @@ class Form(Base):
             "name": self.name,
             "version": self.version,
             "description": self.description,
+            "registration_form": self.registration_form
         }
 
 
@@ -58,6 +63,7 @@ class FormBase(BaseModel):
     name: str
     version: Optional[float]
     description: Optional[str]
+    registration_form: Optional[int]
     question_group: List[QuestionGroupBase]
 
     class Config:
