@@ -19,7 +19,7 @@ depends_on = None
 def upgrade() -> None:
     op.create_table(
         'form',
-        sa.Column('id', sa.Integer(), nullable=False),
+        sa.Column('id', sa.BigInteger(), nullable=False),
         sa.Column('name', sa.String()),
         sa.Column('version', sa.Float(), nullable=True, default=0.0),
         sa.Column('description', sa.Text(), nullable=True),

@@ -22,7 +22,7 @@ def upgrade() -> None:
         'data',
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('name', sa.String()),
-        sa.Column('form', sa.Integer(), sa.ForeignKey('form.id')),
+        sa.Column('form', sa.BigInteger(), sa.ForeignKey('form.id')),
         sa.Column('geo', pg.ARRAY(sa.Float()), nullable=True),
         sa.Column(
             'created', sa.DateTime(), nullable=True,

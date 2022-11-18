@@ -6,6 +6,7 @@ from db import crud_question_group
 from db import crud_question
 from db.connection import Base, SessionLocal, engine
 from db.truncator import truncate
+from models.question import QuestionType
 import flow.auth as flow_auth
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -31,7 +32,10 @@ for form_id in [flow_auth.registraton_form, flow_auth.monitoring_form]:
         description=json_form.get('description'))
     print(f"Form: {form.name}")
 
-    for qg in json_form.get('questionGroup'):
+    questionGroups = json_form.get('questionGroup')
+    if isinstance(questionGroups, dict):
+        questionGroups = [questionGroups]
+    for qg in questionGroups:
         question_group = crud_question_group.add_question_group(
             session=session,
             name=qg.get('heading'),
@@ -40,9 +44,23 @@ for form_id in [flow_auth.registraton_form, flow_auth.monitoring_form]:
             repeatable=True if qg.get('repeatable') else False)
         print(f"Question Group: {question_group.name}")
 
-        for i, q in enumerate(qg.get('questions')):
+        questions = qg.get('question')
+        if isinstance(questions, dict):
+            questions = [questions]
+        for i, q in enumerate(questions):
             # handle question type
             type = q.get('type')
+            validationType = None
+            allowMultiple = q.get('allowMultiple')
+            if 'validationRule' in q:
+                vr = q.get('validationRule')
+                validationType = vr.get('validationType')
+            if type == 'free' and not validationType:
+                type = QuestionType.text.value
+            if type == 'free' and validationType == 'numeric':
+                type = QuestionType.number.value
+            if type == 'option' and allowMultiple:
+                type == QuestionType.multiple_option.value
             question = crud_question.add_question(
                 session=session,
                 name=q.get('text'),

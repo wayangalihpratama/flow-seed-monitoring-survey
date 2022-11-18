@@ -5,7 +5,7 @@ from datetime import datetime
 from typing_extensions import TypedDict
 from typing import Optional, List, Union
 from pydantic import BaseModel
-from sqlalchemy import Column, Integer, Float, Text, String
+from sqlalchemy import Column, Integer, Float, Text, String, BigInteger
 from sqlalchemy import ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 import sqlalchemy.dialects.postgresql as pg
@@ -20,7 +20,7 @@ class HistoryDict(TypedDict):
 class History(Base):
     __tablename__ = "history"
     id = Column(Integer, primary_key=True, index=True, nullable=True)
-    question = Column(Integer, ForeignKey('question.id'))
+    question = Column(BigInteger, ForeignKey('question.id'))
     data = Column(Integer, ForeignKey('data.id'))
     text = Column(Text, nullable=True)
     value = Column(Float, nullable=True)

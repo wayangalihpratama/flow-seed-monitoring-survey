@@ -4,7 +4,8 @@
 from typing import Optional, List
 from typing_extensions import TypedDict
 from pydantic import BaseModel
-from sqlalchemy import Column, Integer, String, ForeignKey, Text, Boolean
+from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Text, Boolean, BigInteger
 from sqlalchemy.orm import relationship
 from db.connection import Base
 from models.question import QuestionBase
@@ -21,8 +22,8 @@ class QuestionGroupDict(TypedDict):
 
 class QuestionGroup(Base):
     __tablename__ = "question_group"
-    id = Column(Integer, primary_key=True, index=True, nullable=True)
-    form = Column(Integer, ForeignKey('form.id'))
+    id = Column(BigInteger, primary_key=True, index=True, nullable=True)
+    form = Column(BigInteger, ForeignKey('form.id'))
     name = Column(String)
     order = Column(Integer, nullable=True)
     description = Column(Text, nullable=True)

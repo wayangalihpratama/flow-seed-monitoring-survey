@@ -4,7 +4,7 @@
 from typing_extensions import TypedDict
 from typing import List, Optional
 from pydantic import BaseModel
-from sqlalchemy import Column, Integer, String, Text, Float
+from sqlalchemy import Column, BigInteger, String, Text, Float
 from sqlalchemy.orm import relationship
 from db.connection import Base
 from models.question_group import QuestionGroupBase
@@ -19,7 +19,7 @@ class FormDict(TypedDict):
 
 class Form(Base):
     __tablename__ = "form"
-    id = Column(Integer, primary_key=True, index=True, nullable=True)
+    id = Column(BigInteger, primary_key=True, index=True, nullable=True)
     name = Column(String)
     description = Column(Text, nullable=True)
     version = Column(Float, nullable=True, default=0.0)

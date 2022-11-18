@@ -6,7 +6,8 @@ from typing_extensions import TypedDict
 from typing import Optional, List
 from pydantic import BaseModel
 from pydantic import confloat
-from sqlalchemy import Column, Integer, Float, String, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, Float, String
+from sqlalchemy import ForeignKey, DateTime, BigInteger
 import sqlalchemy.dialects.postgresql as pg
 from sqlalchemy.orm import relationship
 from db.connection import Base
@@ -45,7 +46,7 @@ class Data(Base):
     __tablename__ = "data"
     id = Column(Integer, primary_key=True, index=True, nullable=True)
     name = Column(String)
-    form = Column(Integer, ForeignKey(Form.id))
+    form = Column(BigInteger, ForeignKey(Form.id))
     geo = Column(pg.ARRAY(Float), nullable=True)
     created = Column(DateTime, nullable=True)
     updated = Column(DateTime, nullable=True)

@@ -5,7 +5,7 @@ from datetime import datetime
 from typing_extensions import TypedDict
 from typing import Optional, List, Union
 from pydantic import BaseModel
-from sqlalchemy import Column, Integer, Float, Text, String
+from sqlalchemy import Column, Integer, Float, Text, String, BigInteger
 from sqlalchemy import ForeignKey, DateTime
 from sqlalchemy.orm import relationship
 import sqlalchemy.dialects.postgresql as pg
@@ -23,7 +23,7 @@ class Answer(Base):
     __tablename__ = "answer"
     id = Column(Integer, primary_key=True, index=True, nullable=True)
     question = Column(
-        Integer,
+        BigInteger,
         ForeignKey('question.id', onupdate="CASCADE", ondelete="CASCADE"),
         primary_key=True)
     data = Column(

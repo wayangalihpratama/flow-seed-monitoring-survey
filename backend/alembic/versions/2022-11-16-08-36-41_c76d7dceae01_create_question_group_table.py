@@ -20,10 +20,10 @@ depends_on = None
 def upgrade() -> None:
     op.create_table(
         'question_group',
-        sa.Column('id', sa.Integer(), nullable=False),
+        sa.Column('id', sa.BigInteger(), nullable=False),
         sa.Column('order', sa.Integer(), default=None),
         sa.Column('name', sa.String()),
-        sa.Column('form', sa.Integer(), sa.ForeignKey('form.id')),
+        sa.Column('form', sa.BigInteger(), sa.ForeignKey('form.id')),
         sa.Column('description', sa.Text(), nullable=True),
         sa.Column(
             'repeatable', sa.Boolean, server_default=expression.false(),

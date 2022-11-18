@@ -25,14 +25,15 @@ class CastingArray(pg.ARRAY):
 def upgrade() -> None:
     op.create_table(
         'question',
-        sa.Column('id', sa.Integer(), nullable=False),
+        sa.Column('id', sa.BigInteger(), nullable=False),
         sa.Column('order', sa.Integer(), default=None),
         sa.Column('name', sa.String()),
-        sa.Column('form', sa.Integer(), sa.ForeignKey('form.id')),
-        sa.Column('meta', sa.Boolean(), nullable=False),
+        sa.Column('form', sa.BigInteger(), sa.ForeignKey('form.id')),
         sa.Column('type', sa.String()),
+        sa.Column('meta', sa.Boolean(), nullable=False),
+        sa.Column('required', sa.Boolean(), nullable=False),
         sa.Column(
-            'question_group', sa.Integer(),
+            'question_group', sa.BigInteger(),
             sa.ForeignKey('question_group.id')),
         sa.Column('dependency', CastingArray(pg.JSONB()), nullable=True),
         sa.PrimaryKeyConstraint('id'),

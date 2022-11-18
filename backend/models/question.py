@@ -5,7 +5,7 @@ import enum
 from typing import Optional, List
 from typing_extensions import TypedDict
 from pydantic import BaseModel
-from sqlalchemy import Column, ForeignKey
+from sqlalchemy import Column, ForeignKey, BigInteger
 from sqlalchemy import Boolean, Integer, String, Enum
 from sqlalchemy.orm import relationship
 import sqlalchemy.dialects.postgresql as pg
@@ -21,6 +21,8 @@ class QuestionType(enum.Enum):
     photo = 'photo'
     date = 'date'
     geo = 'geo'
+    cascade = 'cascade'
+    geoshape = 'geoshape'
 
 
 class DependencyDict(TypedDict):
@@ -43,9 +45,9 @@ class QuestionDict(TypedDict):
 
 class Question(Base):
     __tablename__ = "question"
-    id = Column(Integer, primary_key=True, index=True, nullable=True)
-    form = Column(Integer, ForeignKey('form.id'))
-    question_group = Column(Integer, ForeignKey('question_group.id'))
+    id = Column(BigInteger, primary_key=True, index=True, nullable=True)
+    form = Column(BigInteger, ForeignKey('form.id'))
+    question_group = Column(BigInteger, ForeignKey('question_group.id'))
     name = Column(String)
     order = Column(Integer, nullable=True)
     meta = Column(Boolean, default=False)
