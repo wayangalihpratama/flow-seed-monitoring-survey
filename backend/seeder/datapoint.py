@@ -17,18 +17,8 @@ session = SessionLocal()
 start_time = time.process_time()
 token = flow_auth.get_token()
 
-for table in ["data", "answer", "history"]:
-    action = truncate(session=session, table=table)
-    print(action)
 
-for form_id in [flow_auth.registraton_form, flow_auth.monitoring_form]:
-    # fetch datapoint
-    data = flow_auth.get_datapoint(
-        token=token, survey_id=flow_auth.survey_id,
-        form_id=form_id, page_size=300)
-    if not data:
-        print(f"{form_id}: seed ERROR!")
-        break
+def seed_datapoint(data):
     formInstances = data.get('formInstances')
     nextPageUrl = data.get('nextPageUrl')
     for fi in formInstances:
@@ -61,8 +51,30 @@ for form_id in [flow_auth.registraton_form, flow_auth.monitoring_form]:
             created=fi.get('createdAt'),
             answers=answers)
         print(f"Datapoint: {data.id}")
+    if nextPageUrl:
+        print(f"### nextPageUrl: {nextPageUrl}")
+        data = flow_auth.get_data(url=nextPageUrl, token=token)
+        if len(data.get('formInstances')):
+            seed_datapoint(data=data)
     print(f"{form_id}: seed complete")
     print("------------------------------------------")
+
+
+for table in ["data", "answer", "history"]:
+    action = truncate(session=session, table=table)
+    print(action)
+
+
+for form_id in [flow_auth.registraton_form, flow_auth.monitoring_form]:
+    # fetch datapoint
+    data = flow_auth.get_datapoint(
+        token=token, survey_id=flow_auth.survey_id,
+        form_id=form_id, page_size=300)
+    if not data:
+        print(f"{form_id}: seed ERROR!")
+        break
+    seed_datapoint(data=data)
+
 
 elapsed_time = time.process_time() - start_time
 elapsed_time = str(timedelta(seconds=elapsed_time)).split(".")[0]

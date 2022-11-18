@@ -56,10 +56,11 @@ def get_form(token, form_id: int):
     return get_data(url, token)
 
 
-def get_datapoint(token, survey_id: int, form_id: int, page_size: int = 50):
+def get_datapoint(token, survey_id: int, form_id: int, page_size: int = None):
     # do we need to init sync here?
     # if yes, we need to create sync table
     url = data_url.replace("#survey#", str(survey_id))
     url = url.replace("#form#", str(form_id))
-    url = f"{url}&page_size={page_size}"
+    if (page_size):
+        url = f"{url}&page_size={page_size}"
     return get_data(url, token)
