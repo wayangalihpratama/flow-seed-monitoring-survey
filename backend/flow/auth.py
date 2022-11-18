@@ -48,7 +48,7 @@ def get_data(url, token):
         response = response.json()
         return response
     print("ERROR: " + url)
-    return response
+    return None
 
 
 def get_form(token, form_id: int):

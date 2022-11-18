@@ -25,7 +25,10 @@ for form_id in [flow_auth.registraton_form, flow_auth.monitoring_form]:
     # fetch datapoint
     data = flow_auth.get_datapoint(
         token=token, survey_id=flow_auth.survey_id,
-        form_id=form_id, page_size=100)
+        form_id=form_id, page_size=300)
+    if not data:
+        print(f"{form_id}: seed ERROR!")
+        break
     formInstances = data.get('formInstances')
     nextPageUrl = data.get('nextPageUrl')
     for fi in formInstances:
