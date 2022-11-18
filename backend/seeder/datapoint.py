@@ -41,6 +41,7 @@ for form_id in [flow_auth.registraton_form, flow_auth.monitoring_form]:
                     question = crud_question.get_question_by_id(
                         session=session, id=kval)
                     if not question:
+                        print(f"{kval}: 404 not found")
                         continue
                     if question.type == QuestionType.geo:
                         geoVal = [aval.get('lat'), aval.get('long')]

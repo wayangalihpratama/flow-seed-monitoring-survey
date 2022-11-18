@@ -34,7 +34,7 @@ def append_value(
             else v.get('text') for v in value]
         answer.options = options
     if type == QuestionType.photo:
-        answer.text = value.get('filename')
+        answer.text = json.dumps(value)
     if type == QuestionType.geoshape:
         answer.text = json.dumps(value)
     return answer
