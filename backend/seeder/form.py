@@ -31,9 +31,10 @@ for form in forms:
     form_id = form.get('id')
     json_form = flow_auth.get_form(token=token, form_id=form_id)
 
+    name = json_form.get('name') if 'name' in json_form else form.get('name')
     form = crud_form.add_form(
         session=session,
-        name=json_form.get('name') if 'name' in json_form else form.get('name'),
+        name=name,
         id=json_form.get('surveyId'),
         registration_form=form.get('registration_form'),
         version=json_form.get('version') if 'version' in json_form else 1.0,

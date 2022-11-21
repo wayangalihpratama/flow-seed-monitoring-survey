@@ -1,5 +1,6 @@
 import os
 import time
+import json
 from datetime import timedelta
 from db import crud_question
 from db import crud_data
@@ -14,14 +15,18 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 Base.metadata.create_all(bind=engine)
 session = SessionLocal()
 
+forms = []
+forms_config = "./config/forms.json"
+with open(forms_config) as json_file:
+    forms = json.load(json_file)
+
 start_time = time.process_time()
 token = flow_auth.get_token()
 
 
 # TODO:: MONITORING DATAPOINT
-# 1. Add 'identifier' as the unique identifier that link registration with monitoring datapoint
-# 2. how we now if form is a registration or monitoring form?
-# 3. we need to seed both registration and monitoring datapoints (while monitoring will be have histories)
+# 3. we need to seed both registration and monitoring datapoints
+# (while monitoring will be have histories)
 
 def seed_datapoint(data):
     formInstances = data.get('formInstances')
@@ -50,6 +55,7 @@ def seed_datapoint(data):
         data = crud_data.add_data(
             session=session,
             id=fi.get('id'),
+            identifier=fi.get('identifier'),
             name=fi.get('displayName'),
             form=form_id,
             geo=geoVal,
@@ -70,11 +76,12 @@ for table in ["data", "answer", "history"]:
     print(action)
 
 
-for form_id in [flow_auth.registraton_form, flow_auth.monitoring_form]:
+for form in forms:
     # fetch datapoint
+    form_id = form.get('id')
+    survey_id = form.get('survey_id')
     data = flow_auth.get_datapoint(
-        token=token, survey_id=flow_auth.survey_id,
-        form_id=form_id, page_size=300)
+        token=token, survey_id=survey_id, form_id=form_id, page_size=300)
     if not data:
         print(f"{form_id}: seed ERROR!")
         break
