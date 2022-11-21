@@ -15,20 +15,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 Base.metadata.create_all(bind=engine)
 session = SessionLocal()
 
-forms = []
-forms_config = "./config/forms.json"
-with open(forms_config) as json_file:
-    forms = json.load(json_file)
-
-start_time = time.process_time()
-token = flow_auth.get_token()
-
-
 # TODO:: MONITORING DATAPOINT
 # 3. we need to seed both registration and monitoring datapoints
 # (while monitoring will be have histories)
 
-def seed_datapoint(data):
+
+def seed_datapoint(token, data, form_id):
     formInstances = data.get('formInstances')
     nextPageUrl = data.get('nextPageUrl')
     for fi in formInstances:
@@ -64,30 +56,37 @@ def seed_datapoint(data):
         print(f"Datapoint: {data.id}")
     if nextPageUrl:
         print(f"### nextPageUrl: {nextPageUrl}")
-        data = flow_auth.get_data(url=nextPageUrl, token=token)
+        data = flow_auth.get_data(
+            url=nextPageUrl, token=token)
         if len(data.get('formInstances')):
             seed_datapoint(data=data)
     print(f"{form_id}: seed complete")
     print("------------------------------------------")
 
 
-for table in ["data", "answer", "history"]:
-    action = truncate(session=session, table=table)
-    print(action)
+def datapoint_seeder(token):
+    start_time = time.process_time()
 
+    forms = []
+    forms_config = "./config/forms.json"
+    with open(forms_config) as json_file:
+        forms = json.load(json_file)
 
-for form in forms:
-    # fetch datapoint
-    form_id = form.get('id')
-    survey_id = form.get('survey_id')
-    data = flow_auth.get_datapoint(
-        token=token, survey_id=survey_id, form_id=form_id, page_size=300)
-    if not data:
-        print(f"{form_id}: seed ERROR!")
-        break
-    seed_datapoint(data=data)
+    for table in ["data", "answer", "history"]:
+        action = truncate(session=session, table=table)
+        print(action)
 
+    for form in forms:
+        # fetch datapoint
+        form_id = form.get('id')
+        survey_id = form.get('survey_id')
+        data = flow_auth.get_datapoint(
+            token=token, survey_id=survey_id, form_id=form_id)
+        if not data:
+            print(f"{form_id}: seed ERROR!")
+            break
+        seed_datapoint(token=token, data=data, form_id=form_id)
 
-elapsed_time = time.process_time() - start_time
-elapsed_time = str(timedelta(seconds=elapsed_time)).split(".")[0]
-print(f"\n-- DONE IN {elapsed_time}\n")
+    elapsed_time = time.process_time() - start_time
+    elapsed_time = str(timedelta(seconds=elapsed_time)).split(".")[0]
+    print(f"\n-- DONE IN {elapsed_time}\n")
