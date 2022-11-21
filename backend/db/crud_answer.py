@@ -54,10 +54,9 @@ def add_answer(
 
 def update_answer(
     session: Session, answer: Answer,
-    history: History, user: int, type: QuestionType,
+    history: History, type: QuestionType,
     value: Union[int, float, str, bool, List[str], List[int], List[float]]
 ) -> AnswerDict:
-    answer.updated_by = user
     answer.updated = datetime.now()
     answer = append_value(answer, value, type)
     session.add(history)
