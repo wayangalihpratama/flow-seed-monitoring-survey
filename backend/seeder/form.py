@@ -1,5 +1,6 @@
 import os
 import time
+import json
 from datetime import timedelta
 from db import crud_form
 from db import crud_question_group
@@ -13,6 +14,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 Base.metadata.create_all(bind=engine)
 session = SessionLocal()
 
+forms = []
+forms_config = "./config/forms.json"
+with open(forms_config) as json_file:
+    forms = json.load(json_file)
+
 start_time = time.process_time()
 token = flow_auth.get_token()
 
@@ -20,16 +26,16 @@ for table in ["form", "question_group", "question", "option"]:
     action = truncate(session=session, table=table)
     print(action)
 
-# TODO:: Need to update form seeder, add registration_form id
-
-for form_id in [flow_auth.registraton_form, flow_auth.monitoring_form]:
+for form in forms:
     # fetch form
+    form_id = form.get('id')
     json_form = flow_auth.get_form(token=token, form_id=form_id)
 
     form = crud_form.add_form(
         session=session,
-        name=json_form.get('name'),
+        name=json_form.get('name') if 'name' in json_form else form.get('name'),
         id=json_form.get('surveyId'),
+        registration_form=form.get('registration_form'),
         version=json_form.get('version') if 'version' in json_form else 1.0,
         description=json_form.get('description'))
     print(f"Form: {form.name}")
